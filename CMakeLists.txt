@@ -4,3 +4,16 @@ project(sfdob LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDART 20)
 
+include_directories(include external)
+
+add_executable(${PROJECT_NAME}
+    main.cpp
+
+    external/stb_image_write.h
+    external/std_image.h
+    
+    include/image.hpp
+    src/image.cpp
+    include/saveImagePNG.hpp
+    src/saveImagePNG.cpp
+)
