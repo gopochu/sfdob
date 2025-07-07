@@ -10,10 +10,10 @@ add_executable(${PROJECT_NAME}
     main.cpp
 
     external/stb_image_write.h
-    external/std_image.h
+    external/stb_image.h
     
     include/image.hpp
     src/image.cpp
-    include/saveImagePNG.hpp
-    src/saveImagePNG.cpp
+    include/image_io.hpp
+    src/image_io.cpp
 )

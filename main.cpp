@@ -1,28 +1,27 @@
 #include "image.hpp"
-#include "saveImagePNG.hpp"
-#include <iostream>
+#include "image_io.hpp"
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
+
+#include <chrono>
+#include <iostream>
 
 int main() {
     // tmp code
-    Image img;
-    img.width = 2;
-    img.height = 2;
-    img.channels = 3;
-    img.data.resize(2 * 2 * 3);
+    
+    auto start = std::chrono::high_resolution_clock::now();
+    Image img(2, 2, 3); // 2x2 image with 3 channels (RGB)
 
-    // (0, 0) — красный
-    img.set(0, 0, 255, 0);
-    img.set(0, 0, 0,   1);
-    img.set(0, 0, 0,   2);
+    img.setRGB(0, 0, 0, 0, 255);
+    img.setRGB(1, 0, 0, 255, 0);
+    img.setRGB(0, 1, 255, 0, 0);
 
-    // (1, 1) — синий
-    img.set(1, 1, 0,   0);
-    img.set(1, 1, 0,   1);
-    img.set(1, 1, 255, 2);
 
-    saveImagePNG("test.png", img);
+    image_io::save(img, "test.png");
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    std::cout << "Image saved in " << elapsed.count() << " seconds." << std::endl;
+
     return 0;
 }

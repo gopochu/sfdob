@@ -6,6 +6,9 @@
 struct Image {
     int width, height, channels;
     
+    Image();
+    Image(int width, int height, int channels);
+
     //Храним значение всех пикселей по каналам
     //255, 0, 0,     Pixel 1: Red
     //0, 255, 0,     Pixel 2: Green
