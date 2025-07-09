@@ -1,25 +1,26 @@
 #include "image.hpp"
 #include "image_io.hpp"
 
+#include "preprocessor.hpp"
 #include "stb_image_write.h"
+#include "types.hpp"
 
 #include <chrono>
 #include <iostream>
 
 int main() {
-    // tmp code
-    
+    // tmp code  
     auto start = std::chrono::high_resolution_clock::now();
-    Image img(2, 2, 3); // 2x2 image with 3 channels (RGB)
+    Image img = image_io::load("C:/programming/C++/sfdob/testdata/source.png");
+    ROI roi = {0, img.width - 1, 0, img.height - 1};
 
-    img.setRGB(0, 0, 0, 0, 255);
-    img.setRGB(1, 0, 0, 255, 0);
-    img.setRGB(0, 1, 255, 0, 0);
+    std::cout << "Image loaded: " << img.width << "x" << img.height << " with " << img.channels << " channels." << std::endl;
 
-
+    img = preprocessor::grayScaleImage(img, roi);
     image_io::save(img, "test.png");
 
     auto end = std::chrono::high_resolution_clock::now();
+
     std::chrono::duration<double> elapsed = end - start;
     std::cout << "Image saved in " << elapsed.count() << " seconds." << std::endl;
 

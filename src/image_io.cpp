@@ -13,7 +13,7 @@ Image image_io::load(const std::string& filename) {
     unsigned char* data = stbi_load(filename.c_str(), &width, &height, &channels, 0);
     
     if (!data) {
-        throw std::runtime_error("Failed to load image: " + filename);
+        throw std::invalid_argument("Failed to load image: " + filename);
     }
 
     Image img(width, height, channels);
@@ -24,9 +24,8 @@ Image image_io::load(const std::string& filename) {
 }
 
 void image_io::save(const Image& image, const std::string& filename) {
-    //TODO: Доделать
     int result = stbi_write_png(filename.c_str(), image.width, image.height, image.channels, image.data.data(), image.width * image.channels);
     if (result == 0) {
-        throw std::runtime_error("Failed to save image: " + filename);
+        throw std::invalid_argument("Failed to save image: " + filename);
     }
 }

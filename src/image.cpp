@@ -29,7 +29,7 @@ void Image::set(int x, int y, uint8_t value, int c) {
 
 void Image::setRGB(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
     if(channels < 3) {
-        throw std::runtime_error("Image must have at least 3 channels for RGB.");
+        throw std::invalid_argument("Image must have at least 3 channels for RGB.");
     }
     set(x, y, r, 0);
     set(x, y, g, 1);

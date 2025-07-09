@@ -16,4 +16,7 @@ add_executable(${PROJECT_NAME}
     src/image.cpp
     include/image_io.hpp
     src/image_io.cpp
+
+    include/preprocessor.hpp
+    src/preprocessor.cpp
 )
