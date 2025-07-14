@@ -2,21 +2,25 @@ cmake_minimum_required(VERSION 3.20)
 
 project(sfdob LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDART 20)
+set(CMAKE_CXX_STANDARD 20)
 
-include_directories(include external)
+# set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/core 
+    # ${CMAKE_CURRENT_SOURCE_DIR}/src/utils
+    # ${CMAKE_CURRENT_SOURCE_DIR}/src/steps
+    # ${CMAKE_CURRENT_SOURCE_DIR}/src
+# )
 
-add_executable(${PROJECT_NAME}
-    main.cpp
+# include_directories(external src src/utils src/core src/steps include)
 
-    external/stb_image_write.h
-    external/stb_image.h
-    
-    include/image.hpp
-    src/image.cpp
-    include/image_io.hpp
-    src/image_io.cpp
-
-    include/preprocessor.hpp
-    src/preprocessor.cpp
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/steps
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/external
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*/*.cpp")
+
+add_executable(${PROJECT_NAME} ${SOURCES})

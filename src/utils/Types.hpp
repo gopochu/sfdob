@@ -6,9 +6,8 @@ struct Point {
     int x, y;
 };
 
-struct ROI {
-    int x_min, x_max;
-    int y_min, y_max;
+struct Rect {
+    int x, y, width, height;
 };
 
 struct DefectInfo {
@@ -20,8 +19,15 @@ struct DefectInfo {
 
 struct ComponentInfo {
     int id;
-    ROI bbox; // Bounding box компоненты
+    // ROI bbox; // Bounding box компоненты
     int num_points;
     double total_defect_value;
     std::vector<Point> points; // Опционально, для отладки или визуализации
 };
+
+enum class ColorMode {
+    GrayScaleImage,
+    GreenImage,
+    MaxColorProwlImage
+};
+
