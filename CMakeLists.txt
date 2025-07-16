@@ -24,3 +24,6 @@ include_directories(
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*/*.cpp")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
+
+find_package(Threads REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)

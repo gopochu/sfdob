@@ -2,7 +2,7 @@
 
 #include "ProcessingStep.h"
 #include "Config.hpp"
-#include "ROI.hpp"
+#include "Types.hpp"
 
 #include <filesystem>
 
@@ -18,11 +18,13 @@ private:
 
     // Данные
     Image etalonImage, workImage, maskImage;
-    ROI roi;
-
+    Rect roi;
 
     void processImage(const fs::path& imagePath);
     bool loadData();
-    void saveData() const;
+    void saveResult() const;
     void printResults() const;
+
+    Image detectPoints(const Image& image) const;
+    Image filterAndGroup(const Image& image) const;
 };
