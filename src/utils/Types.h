@@ -31,3 +31,8 @@ enum class ColorMode {
     MaxColorProwlImage
 };
 
+struct Defect {
+    Rect bounds;
+    int pixel_count = 0;
+    double total_magnitude = 0.0;
+};

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ProcessingStep.h"
-#include "Types.hpp"
-#include "Image.hpp"
+#include "Types.h"
+#include "Image.h"
+#include "Config.h"
 
 class PointDetector : ProcessingStep {
 public:
@@ -11,11 +12,11 @@ public:
 private:
     void processRoiChunk(int startY, int endY);
 
-    Image workImage;
-    Image referenceImage;
-    Image maskImage;
-    Image defectMap;
-    Rect roi;
-    Config config;
+    const Image& workImage;
+    const Image& referenceImage;
+    const Image& maskImage;
+    Image& defectMap;
+    const Rect& roi;
+    const Config& config;
     int numThreads;
 };

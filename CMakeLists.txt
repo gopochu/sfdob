@@ -23,7 +23,11 @@ include_directories(
 
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*/*.cpp")
 
+# add_definitions(-DCOLOR_MODE=1)
+
 add_executable(${PROJECT_NAME} ${SOURCES})
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE COLOR_MODE=1)
 
 find_package(Threads REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)

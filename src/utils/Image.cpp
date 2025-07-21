@@ -1,4 +1,4 @@
-#include "Image.hpp"
+#include "Image.h"
 
 // Подключаем stb_image для загрузки и сохранения изображений
 // Реализация stb_image будет в main.cpp, чтобы избежать ошибок линковки

@@ -1,8 +1,11 @@
-#include "PointDetector.hpp"
-#include "Types.hpp"
+#include "PointDetector.h"
+#include "Preprocess.h"
+#include "Types.h"
+
 #include <thread>
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 
 PointDetector::PointDetector(const Image& workImage, const Image& referenceImage, const Image& maskImage, Image& defectMap, const Rect& roi, const Config& config, const int numThreads)
     : workImage(workImage), referenceImage(referenceImage), maskImage(maskImage), defectMap(defectMap), roi(roi), config(config), numThreads(numThreads) {};
@@ -13,7 +16,9 @@ void PointDetector::process() {
 
     int rowsPerThread = roi.height / numThreads;
 
+    // Если количество строк не делится на количество потоков, последний поток обработает оставшиеся строки
     for (int i = 0; i < numThreads; ++i) {
+        // Определяем диапазон строк для каждого потока
         int startRow = roi.y + i * rowsPerThread;
         int endRow = (i == numThreads - 1) ? roi.y + roi.height: startRow + rowsPerThread;
         threads.emplace_back(&PointDetector::processRoiChunk, this, startRow, endRow);
@@ -27,39 +32,44 @@ void PointDetector::process() {
 }
 
 void PointDetector::processRoiChunk(int startRow, int endRow) {
+    if (startRow < roi.y || endRow > roi.y + roi.height) {
+        throw std::out_of_range("Row range is out of bounds of the ROI");
+    }
+    // Вертикальное и горизонтальное направление
     std::vector<Point> directions = {{1,0 }, {0, 1}};
+
+    // Добавляем диагональные направления, если требуется
     if (config.numDirections == 4) {
         directions.push_back({-1, 1});
         directions.push_back({1, -1});
     }
 
-    int max_offset = config.offsets.empty() ? 0 : *std::max_element(config.offsets.begin(), config.offsets.end());
+    Preprocess preprocess(referenceImage, defectMap, config);
 
     for (int y = startRow; y < endRow; ++y) {
         for (int x = roi.x; x < roi.x + roi.width; ++x) {
-            if (workImage.is_valid(x + max_offset, y + max_offset) || !workImage.is_valid(x - max_offset, y - max_offset)) continue;
-            if (maskImage.at(x, y, 0) == 0) continue;
-            
             int referenceImageLightness = referenceImage.at(x, y, 0);
             if (referenceImageLightness < config.darknessThreshold) continue;
-            auto getPixelValue = [&](const Image& img, int px, int py) {
-                switch (config.colorMode) {
-                    case 1 : return (img.at(px, py, 0) + img.at(px, py, 1) + img.at(px, py, 2));
-                    case 2 : return (img.at(px, py, 0) / 4 + img.at(px, py, 1) / 2 + img.at(px, py, 2) / 4);
-                    default: return int(img.at(px, py, 1));
-                }
-            };
-            int workImageLightness = getPixelValue(workImage, x, y);
+
             int lineDefectValue = 0;
             int blotchDefectValue = 0;
+            int workImageLightness = workImage.at(x, y, 0);
 
-            for (int offset : config.offsets) {
-                for (const auto& direction : directions) {
-                    int val1 = getPixelValue(workImage, x + direction.x * offset, y + direction.y * offset);
-                    int val2 = getPixelValue(workImage, x - direction.x * offset, y - direction.y * offset);
-                    int diff = std::min(val1, val2) - workImageLightness;
-                    if (diff > lineDefectValue) lineDefectValue = diff;
-                }
+            // for (int offset : config.tikness) {
+            //     for (const auto& direction : directions) {
+            //         int val1 = workImage.at(x + direction.x * offset, y + direction.y * offset, 0);
+            //         int val2 = workImage.at(x - direction.x * offset, y - direction.y * offset, 0);
+            //         int diff = std::min(val1, val2) - workImageLightness;
+            //         if (diff > lineDefectValue) lineDefectValue = diff;
+            //     }
+            // }
+            
+            int offset = config.tikness;
+            for (const auto& direction : directions) {
+                int val1 = workImage.at(x + direction.x * offset, y + direction.y * offset, 0);
+                int val2 = workImage.at(x - direction.x * offset, y - direction.y * offset, 0);
+                int diff = std::min(val1, val2) - workImageLightness;
+                if (diff > lineDefectValue) lineDefectValue = diff;
             }
 
             blotchDefectValue = referenceImageLightness - workImageLightness;

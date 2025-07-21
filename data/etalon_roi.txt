@@ -1,0 +1,4 @@
+left=155
+top=248
+right=612
+bottom=1282

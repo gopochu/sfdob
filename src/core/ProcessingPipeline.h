@@ -1,16 +1,18 @@
 #pragma once
 
 #include "ProcessingStep.h"
-#include "Config.hpp"
-#include "Types.hpp"
+#include "Config.h"
+#include "Types.h"
 
 #include <filesystem>
+#include <chrono>
 
 namespace fs = std::filesystem;
 class Process : ProcessingStep {
 public:
     Process(const fs::path& path, const Config& config, int numThreads);
     void process() override;
+
 private:
     fs::path path;
     Config config;
@@ -20,11 +22,13 @@ private:
     Image etalonImage, workImage, maskImage;
     Rect roi;
 
-    void processImage(const fs::path& imagePath);
+    std::chrono::time_point<std::chrono::high_resolution_clock> end;
+    std::chrono::time_point<std::chrono::high_resolution_clock> start;
+    
+    void stopTimer();
+    void startTimer();
+
     bool loadData();
     void saveResult() const;
     void printResults() const;
-
-    Image detectPoints(const Image& image) const;
-    Image filterAndGroup(const Image& image) const;
 };

@@ -1,14 +1,11 @@
-#include "Config.hpp"
-#include "Preprocess.hpp"
+#include "Config.h"
+#include "ProcessingPipeline.h"
+
+namespace fs = std::filesystem;
 
 int main() {
-    Image inputImage;
-    inputImage.load("C:/programming/C++/sfdob/testdata/etalon.png");
-    // Image outputImage(inputImage.width, inputImage.height, 2);
-    Image outputImage = inputImage;
-    outputImage.save_png("C:/programming/C++/sfdob/testdata/res.png");
+    fs::path dataPath = "../data";
     Config config;
-    Preprocess pr(inputImage, outputImage, config);
-    pr.process();
-    outputImage.save_png("C:/programming/C++/sfdob/testdata/result.png");
+    Process process(dataPath, config, 4);
+    process.process();
 }

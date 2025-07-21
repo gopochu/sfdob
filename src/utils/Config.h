@@ -13,7 +13,8 @@ struct Config {
     int numDirections = 2;
 
     // толщина линиий
-    std::vector<int> offsets = {3, 5};
+    // std::vector<int> tikness = {3, 5};
+    int tikness = 5;
 
     // порог темноты
     int darknessThreshold = 10; 
