@@ -13,15 +13,23 @@ Process::Process(const fs::path& path, const Config& config, int numThreads)
 void Process::process() {
     loadData();
 
-    Image defectMap(workImage.width, workImage.height, 1);
+    // TODO Нужно передавать defectMap и etalonImage в processRoiChunk, и только затем сравнивать
+    // Так же переделать preprocessor, так как process() безполезный и очень запутанный со всеми этими ссылками на ссылки
+    // И можно добавить отладку через #if
+    // Так же сделать обход по маске
 
+    // Image defectMap(workImage.width, workImage.height, workImage.channels);
+    Image defectMap = workImage;
     Preprocess preprocess(workImage, defectMap, config);
+
     etalonImage = preprocess.scaleImage(etalonImage);
-    
+    defectMap = preprocess.scaleImage(defectMap);
+    defectMap.save_png("defect_map1.png");
+
     PointDetector pointDetector(workImage, etalonImage, maskImage, defectMap, roi, config, 4);
     pointDetector.process();
-    
-    defectMap.save_png("defect_map.png");
+
+    defectMap.save_png("defect_map2.png");
     etalonImage.save_png("etalon_scaled.png");
 }
 

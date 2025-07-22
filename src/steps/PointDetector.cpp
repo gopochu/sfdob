@@ -31,6 +31,8 @@ void PointDetector::process() {
     }
 }
 
+
+
 void PointDetector::processRoiChunk(int startRow, int endRow) {
     if (startRow < roi.y || endRow > roi.y + roi.height) {
         throw std::out_of_range("Row range is out of bounds of the ROI");
@@ -39,7 +41,8 @@ void PointDetector::processRoiChunk(int startRow, int endRow) {
     // std::vector<Point> directions = {{1,0 }, {0, 1}};
     std::array<Point, 4> directions = {Point{1, 0}, Point{0, 1}, Point{-1, 1}, Point{1, -1}};
 
-    Preprocess preprocess(referenceImage, defectMap, config);
+    // Preprocess preprocess(referenceImage, defectMap, config);
+    defectMap.save_png("defect_mapPreprocessed.png");
 
     for (int y = startRow; y < endRow; ++y) {
         for (int x = roi.x; x < roi.x + roi.width; ++x) {
@@ -55,13 +58,14 @@ void PointDetector::processRoiChunk(int startRow, int endRow) {
                     const Point& direction = directions[i];
                     int val1 = workImage.at(x + direction.x * offset, y + direction.y * offset, 0);
                     int val2 = workImage.at(x - direction.x * offset, y - direction.y * offset, 0);
+                    
                     int diff = std::min(val1, val2) - workImageLightness;
                     if (diff > lineDefectValue) lineDefectValue = diff;
                 }
             }
 
             blotchDefectValue = referenceImageLightness - workImageLightness;
-            lineDefectValue = referenceImage.at(x, y, 1);
+            // lineDefectValue = referenceImage.at(x, y, 1);
             int resultDefectValue = std::max(lineDefectValue, blotchDefectValue);
 
             if (resultDefectValue > config.darknessThreshold) {

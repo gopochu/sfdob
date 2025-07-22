@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <algorithm>
+#include <iostream>
 
 Preprocess::Preprocess(const Image& inputImage, Image& outputImage, const Config& config)
     : inputImage(inputImage), config(config) {};
@@ -37,6 +38,7 @@ void Preprocess::grayScaleImage() {
             outputImage.at(x, y, 2) = grayValue;
         }
     }
+    std::cout << "grayscaled" << std::endl;
 }
 
 void Preprocess::greenScaleImage() {
@@ -82,7 +84,7 @@ Image Preprocess::blurImage(Image& image) {
                     int current_y = y + dy;
                     if (!outputImage.is_valid(current_x, current_y)) continue;
                     outputImage.at(x, y, 0) = std::max(max_grad, outputImage.at(x + dx, y + dy, 1));
-                    outputImage.at(x, y, 1) = std::min(min_light, outputImage.at(x + dx, y + dy, 0));
+                    // outputImage.at(x, y, 1) = std::min(min_light, outputImage.at(x + dx, y + dy, 0));
                 }
             }
         }
