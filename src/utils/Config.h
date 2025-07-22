@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <array>
 
 struct Config {
     int blurRadius = 4; // радиус размытия
@@ -14,7 +14,8 @@ struct Config {
 
     // толщина линиий
     // std::vector<int> tikness = {3, 5};
-    int tikness = 5;
+    std::array<int, 3> tikness = {3, 4, 5};
+    // int tikness = 5;
 
     // порог темноты
     int darknessThreshold = 10; 

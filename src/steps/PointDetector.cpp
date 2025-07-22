@@ -36,13 +36,8 @@ void PointDetector::processRoiChunk(int startRow, int endRow) {
         throw std::out_of_range("Row range is out of bounds of the ROI");
     }
     // Вертикальное и горизонтальное направление
-    std::vector<Point> directions = {{1,0 }, {0, 1}};
-
-    // Добавляем диагональные направления, если требуется
-    if (config.numDirections == 4) {
-        directions.push_back({-1, 1});
-        directions.push_back({1, -1});
-    }
+    // std::vector<Point> directions = {{1,0 }, {0, 1}};
+    std::array<Point, 4> directions = {Point{1, 0}, Point{0, 1}, Point{-1, 1}, Point{1, -1}};
 
     Preprocess preprocess(referenceImage, defectMap, config);
 
@@ -55,21 +50,14 @@ void PointDetector::processRoiChunk(int startRow, int endRow) {
             int blotchDefectValue = 0;
             int workImageLightness = workImage.at(x, y, 0);
 
-            // for (int offset : config.tikness) {
-            //     for (const auto& direction : directions) {
-            //         int val1 = workImage.at(x + direction.x * offset, y + direction.y * offset, 0);
-            //         int val2 = workImage.at(x - direction.x * offset, y - direction.y * offset, 0);
-            //         int diff = std::min(val1, val2) - workImageLightness;
-            //         if (diff > lineDefectValue) lineDefectValue = diff;
-            //     }
-            // }
-            
-            int offset = config.tikness;
-            for (const auto& direction : directions) {
-                int val1 = workImage.at(x + direction.x * offset, y + direction.y * offset, 0);
-                int val2 = workImage.at(x - direction.x * offset, y - direction.y * offset, 0);
-                int diff = std::min(val1, val2) - workImageLightness;
-                if (diff > lineDefectValue) lineDefectValue = diff;
+            for (int offset : config.tikness) {
+                for (int i = 0; i < config.numDirections; ++i) {
+                    const Point& direction = directions[i];
+                    int val1 = workImage.at(x + direction.x * offset, y + direction.y * offset, 0);
+                    int val2 = workImage.at(x - direction.x * offset, y - direction.y * offset, 0);
+                    int diff = std::min(val1, val2) - workImageLightness;
+                    if (diff > lineDefectValue) lineDefectValue = diff;
+                }
             }
 
             blotchDefectValue = referenceImageLightness - workImageLightness;
