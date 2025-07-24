@@ -6,18 +6,19 @@
 
 class Preprocess : public ProcessingStep {
 public:
-    Preprocess(const Image& inputImage, Image& outputImage, const Config& config);
+    Preprocess(Image& workImage, Image& etalonImage, const Config& config);
     void process() override;
+    // void run(Image& workImage, Image& etalonImage);
     
-    Image scaleImage(const Image& inputImage);
-    Image blurImage(Image& image);
+    void scaleImage();
+    void blurImage(Image& image);
 
 private:
-    void grayScaleImage();
-    void greenScaleImage();
-    void maxGradientImage();
+    void grayScaleImage(Image& img);
+    void greenScaleImage(Image& img);
+    void maxGradientImage(Image& img);
 
-    const Image& inputImage;
-    Image outputImage;
+    Image& workImage;
+    Image& etalonImage;
     const Config& config;
 };

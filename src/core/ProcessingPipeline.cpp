@@ -1,4 +1,5 @@
 #include "ProcessingPipeline.h"
+#include "Image.h"
 #include "PointDetector.h"
 #include "Preprocess.h"
 
@@ -13,24 +14,26 @@ Process::Process(const fs::path& path, const Config& config, int numThreads)
 void Process::process() {
     loadData();
 
-    // TODO Нужно передавать defectMap и etalonImage в processRoiChunk, и только затем сравнивать
-    // Так же переделать preprocessor, так как process() безполезный и очень запутанный со всеми этими ссылками на ссылки
+    // TODO доделать blurImage, и сделать определение самих точек дефекта
     // И можно добавить отладку через #if
     // Так же сделать обход по маске
 
-    // Image defectMap(workImage.width, workImage.height, workImage.channels);
     Image defectMap = workImage;
-    Preprocess preprocess(workImage, defectMap, config);
+    Preprocess preprocess(defectMap, etalonImage, config);
+    preprocess.process();
 
-    etalonImage = preprocess.scaleImage(etalonImage);
-    defectMap = preprocess.scaleImage(defectMap);
-    defectMap.save_png("defect_map1.png");
-
-    PointDetector pointDetector(workImage, etalonImage, maskImage, defectMap, roi, config, 4);
+    Image tmpDefectMap(defectMap.width, defectMap.height, 1);
+    Image etalonMap(etalonImage.width, etalonImage.height, 1);
+        
+    PointDetector pointDetector(workImage, etalonImage, maskImage, tmpDefectMap, roi,
+     config, 4, etalonMap);
+     
     pointDetector.process();
 
-    defectMap.save_png("defect_map2.png");
-    etalonImage.save_png("etalon_scaled.png");
+    defectMap.save_png("defect_map1.png");
+    etalonMap.save_png("etalonMap.png");
+    tmpDefectMap.save_png("tmpDefectMap1.png");
+
 }
 
 bool Process::loadData() {
@@ -38,11 +41,8 @@ bool Process::loadData() {
         std::cerr << "ERROR: Data directory does not exist: " << path << std::endl;
     }
     if(!workImage.load((path / "work.png").string())) return false;
-    else workImage.load((path / "work.png").string());
     if(!etalonImage.load((path / "etalon_0.png").string())) return false;
-    else etalonImage.load((path / "etalon_0.png").string());
     if(!maskImage.load((path / "work_mask.png").string())) return false;
-    else maskImage.load((path / "work_mask.png").string());
 
     std::ifstream roi((path / "etalon_roi.txt").string());
     if (!roi.is_open()) {
