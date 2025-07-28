@@ -15,8 +15,8 @@ public:
     bool load(const std::string& path);
     void save_png(const std::string& path) const;
 
-    unsigned char& at(int x, int y, int c);
-    const unsigned char& at(int x, int y, int c) const;
+    uint8_t& at(int x, int y, int c);
+    const uint8_t& at(int x, int y, int c) const;
 
     bool is_valid(int x, int y) const;
 };

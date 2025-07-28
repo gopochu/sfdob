@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Image.h"
 #include "Config.h"
 
 class ProcessingStep {

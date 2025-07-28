@@ -2,6 +2,7 @@
 
 #include "ProcessingStep.h"
 #include "Types.h"
+#include "Image.h"
 
 class DefectGrouper : public ProcessingStep {
 public:

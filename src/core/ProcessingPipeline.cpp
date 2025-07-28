@@ -22,18 +22,19 @@ void Process::process() {
     Preprocess preprocess(defectMap, etalonImage, config);
     preprocess.process();
 
+    defectMap.save_png("Blured.png");
+
     Image tmpDefectMap(defectMap.width, defectMap.height, 1);
     Image etalonMap(etalonImage.width, etalonImage.height, 1);
         
     PointDetector pointDetector(workImage, etalonImage, maskImage, tmpDefectMap, roi,
-     config, 4, etalonMap);
-     
+        config, 4, etalonMap);
+        
     pointDetector.process();
 
     defectMap.save_png("defect_map1.png");
     etalonMap.save_png("etalonMap.png");
     tmpDefectMap.save_png("tmpDefectMap1.png");
-
 }
 
 bool Process::loadData() {

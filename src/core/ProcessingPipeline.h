@@ -3,6 +3,7 @@
 #include "ProcessingStep.h"
 #include "Config.h"
 #include "Types.h"
+#include "Image.h"
 
 #include <filesystem>
 #include <chrono>

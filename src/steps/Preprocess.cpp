@@ -1,6 +1,7 @@
 #include "Image.h"
 #include "Preprocess.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <algorithm>
 #include <iostream>
@@ -10,7 +11,7 @@ Preprocess::Preprocess(Image& workImage, Image& etalonImage, const Config& confi
 
 void Preprocess::process() {
     // outputImage = blurImage(outputImage);
-    blurImage(etalonImage);
+    blurImage(workImage);
     scaleImage();
 }
 
@@ -71,21 +72,44 @@ void Preprocess::maxGradientImage(Image& img) {
 
 void Preprocess::blurImage(Image& image) {
     const int blur = config.blurRadius;
-    for (int y = blur; y < image.height; ++y) {
-        for (int x = blur; x < image.width; ++x) {
-            uint8_t max_grad = 0;
-            uint8_t min_light = 255;
+    
+    for (size_t y = 0; y < image.width; ++y) {
+        for (size_t x = 0; x < image.height; ++x) {
+            for (size_t c = 0; c < image.channels; ++c) {
+                int sum = 0;
+                int count = 0;
 
-            for (int dy = -blur; dy <= blur; ++dy) {
-                for (int dx = -blur; dx <= blur; ++dx) {
-                    int current_x = x + dx;
-                    int current_y = y + dy;
-                    if (!image.is_valid(current_x, current_y)) continue;
-                    image.at(x, y, 0) = std::max(max_grad, image.at(x + dx, y + dy, 1));
-                    image.at(x, y, 1) = std::max(max_grad, image.at(x + dx, y + dy, 1));
-                    image.at(x, y, 2) = std::max(max_grad, image.at(x + dx, y + dy, 1));
+                for (size_t dy = -config.blurRadius; dy <= config.blurRadius; ++dy) {
+                    for (size_t dx = -config.blurRadius; dx <= config.blurRadius; ++dx) {
+                        int nx = dx + x;
+                        int ny = dy + y;
+
+                        if (nx >= 0 && nx < image.width && ny >= 0 && ny < image.height) {
+                            sum += image.at(nx, ny, c);
+                            ++count;
+                        }
+                    }
                 }
+                if (count != 0) image.at(x, y, c) = sum / count;
             }
         }
     }
+    std::cout << "blured" << std::endl;
+    // for (int y = blur; y < image.height; ++y) {
+    //     for (int x = blur; x < image.width; ++x) {
+    //         uint8_t max_grad = 0;
+    //         uint8_t min_light = 255;
+
+    //         for (int dy = -blur; dy <= blur; ++dy) {
+    //             for (int dx = -blur; dx <= blur; ++dx) {
+    //                 int current_x = x + dx;
+    //                 int current_y = y + dy;
+    //                 if (!image.is_valid(current_x, current_y)) continue;
+    //                 image.at(x, y, 0) = std::max(max_grad, image.at(x + dx, y + dy, 1));
+    //                 image.at(x, y, 1) = std::max(max_grad, image.at(x + dx, y + dy, 1));
+    //                 image.at(x, y, 2) = std::max(max_grad, image.at(x + dx, y + dy, 1));
+    //             }
+    //         }
+    //     }
+    // }
 }
