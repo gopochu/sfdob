@@ -6,9 +6,10 @@
 
 class DefectGrouper : public ProcessingStep {
 public:
-    DefectGrouper(Image& defectMap, const Image& etalonMap, const Image& maskImage, const Rect& roi, std::vector<Defect> defects, const Config& config);
+    DefectGrouper(Image& defectMap, const Image& etalonMap, const Image& maskImage, const Rect& roi, std::vector<Defect> defects, const Config& config, Image& workImage);
     void process() override;
 private:
+    Image& workImage;
     const Image& defectMap;
     const Image& etalonMap;
     const Image& maskImage;

@@ -105,9 +105,9 @@ void Preprocess::blurImage(Image& image) {
     //                 int current_x = x + dx;
     //                 int current_y = y + dy;
     //                 if (!image.is_valid(current_x, current_y)) continue;
-    //                 image.at(x, y, 0) = std::max(max_grad, image.at(x + dx, y + dy, 1));
-    //                 image.at(x, y, 1) = std::max(max_grad, image.at(x + dx, y + dy, 1));
-    //                 image.at(x, y, 2) = std::max(max_grad, image.at(x + dx, y + dy, 1));
+    //                 image.at(x, y, 0) = std::max(max_grad1, image.at(x + dx, y + dy, 0));
+    //                 image.at(x, y, 1) = std::max(max_grad2, image.at(x + dx, y + dy, 1));
+    //                 image.at(x, y, 2) = std::max(max_grad3, image.at(x + dx, y + dy, 2));
     //             }
     //         }
     //     }

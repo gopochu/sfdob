@@ -3,7 +3,7 @@
 #include <array>
 
 struct Config {
-    int blurRadius = 1000; // радиус размытия
+    int blurRadius = 1; // радиус размытия
     int gradient_offset = 2;
     
     // 0 - зелёный, 1 - усреднённый, 2 - максимальный по цветам

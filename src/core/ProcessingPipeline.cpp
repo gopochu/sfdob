@@ -1,10 +1,12 @@
 #include "ProcessingPipeline.h"
+#include "DefectGrouper.h"
 #include "Image.h"
 #include "PointDetector.h"
 #include "Preprocess.h"
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 Process::Process(const fs::path& path, const Config& config, int numThreads)
     : path(path), config(config), numThreads(numThreads) {
@@ -19,6 +21,7 @@ void Process::process() {
     // Так же сделать обход по маске
 
     Image defectMap = workImage;
+    Image workImage1 = workImage;
     Preprocess preprocess(defectMap, etalonImage, config);
     preprocess.process();
 
@@ -32,6 +35,11 @@ void Process::process() {
         
     pointDetector.process();
 
+    std::vector<Defect> defectArr;
+    DefectGrouper defectGrouper(tmpDefectMap, etalonMap, maskImage, roi, defectArr, config, workImage1);
+    defectGrouper.process();
+
+    workImage1.save_png("workImage1.png");
     defectMap.save_png("defect_map1.png");
     etalonMap.save_png("etalonMap.png");
     tmpDefectMap.save_png("tmpDefectMap1.png");

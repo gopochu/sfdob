@@ -110,5 +110,27 @@ void PointDetector::processEtalonChunk(int startRow, int endRow) {
             }
         }
     }
-}
 
+    etalonMap.save_png("save1.png");
+
+    Image tmp = etalonMap;
+    std::cout << "Channels is: " << tmp.channels << "\n";
+    for (int y = config.blurRadius; y < tmp.height; ++y) {
+        for (int x = config.blurRadius; x < tmp.width; ++x) {
+            //uint8_t max_grad = 15;
+            //uint8_t min_light = 255;
+
+            for (int dy = -config.blurRadius; dy <= config.blurRadius; ++dy) {
+                for (int dx = -config.blurRadius; dx <= config.blurRadius; ++dx) {
+                    int current_x = x + dx;
+                    int current_y = y + dy;
+                    if (!tmp.is_valid(current_x, current_y)) continue;
+                    etalonMap.at(x, y, 0) = std::max(etalonMap.at(x, y, 0), tmp.at(x + dx, y + dy, 0));
+                    etalonMap.at(x, y, 1) = std::max(etalonMap.at(x, y, 1), tmp.at(x + dx, y + dy, 1));
+                    etalonMap.at(x, y, 2) = std::max(etalonMap.at(x, y, 2), tmp.at(x + dx, y + dy, 2));
+                }
+            }
+        }
+    }
+    etalonMap.save_png("save.png");
+}
